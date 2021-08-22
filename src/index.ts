@@ -1,6 +1,4 @@
 export {
-    createFields,
-    selectFields,
     exactlyOneResult,
     createFilters
 } from './database-utils'

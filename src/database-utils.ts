@@ -12,6 +12,10 @@ types.setTypeParser(1082, function (stringValue) {
   return stringValue
 })
 
+export type QueryInterface<Tables> = string | ((args: {
+  sf: <N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, alias?: string) => string
+  cf: <N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, alias?: string) => string
+}) => string)
 
 export type ValueTypes = string | number | boolean | string[] | Date | null | undefined
 
@@ -26,30 +30,6 @@ export const getFilters = (filters: Record<string, ValueTypes> | FilterSubExpres
   } else {
     return createFilters({ filters: Object.entries(filters).map(([field, value], index) => ({ value, field, operator: 'eq', conditionType: index !== 0 ? 'AND' : undefined }) )})
   }
-}
-
-export const createFields = <TABLE>(fields: Array<keyof TABLE>, table?: string) => {
-  const r = fields.reduce((r, field) => {
-    r.push(`'${field}'`)
-    if (table) {
-      r.push(`"${table}".${snakeCase(field as string)}`)
-    } else {
-      r.push(snakeCase(field as string))
-    }
-    return r
-  }, [] as string[])
-  return r.join(',')
-}
-
-export const selectFields = <TABLE>(fields: readonly (keyof TABLE)[], table: string) => {
-  if (fields.length === 0) {
-    return '*'
-  }
-  const r = fields.reduce((r, field) => {
-    r.push(`"${table}".${snakeCase(field as string)}`)
-    return r
-  }, [] as string[])
-  return r.join(',')
 }
 
 // This is definately not production usages

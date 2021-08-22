@@ -1,7 +1,8 @@
 import { FilterSubExpressions } from '@vramework/generic/dist/filter'
 import * as pg from 'pg'
 import { Pool } from 'pg'
-import { exactlyOneResult, getFilters, Logger, sanitizeResult, selectFields, ValueTypes } from './database-utils'
+import { exactlyOneResult, getFilters, Logger, QueryInterface, sanitizeResult, ValueTypes } from './database-utils'
+import { snakeCase } from 'snake-case'
 
 export class TypedPostgresPool<Tables extends { [key: string]: any }, CustomTypes = never> {
   public pool: Pool
@@ -37,8 +38,8 @@ export class TypedPostgresPool<Tables extends { [key: string]: any }, CustomType
   public async crudGet<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, filters: Partial<Record<keyof T, ValueTypes>> | FilterSubExpressions, notSingleError: Error): Promise<Pick<T, typeof fields[number]>>
   public async crudGet<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, filters: Partial<Record<keyof T, ValueTypes>> | FilterSubExpressions, notSingleError?: undefined | Error): Promise<Pick<T, typeof fields[number]> | Pick<T, typeof fields[number]>[]> {
     const { filter, filterValues } = getFilters(filters)
-    const result = await this.query<Pick<T, typeof fields[number]>>(`
-      SELECT ${selectFields<T>(fields, table as string)}
+    const result = await this.query<Pick<T, typeof fields[number]>>(({ sf }) => `
+      SELECT ${sf(table, fields)}
       FROM "app"."${table}"
       ${filter}
     `, filterValues)
@@ -48,8 +49,29 @@ export class TypedPostgresPool<Tables extends { [key: string]: any }, CustomType
     return result.rows
   }
 
-  public async query<T>(statement: string, values?: any[]) {
-    return await this.pool.query<T>(statement, values)
+  public async one<T>(
+    statement: QueryInterface<Tables>,
+    values: Array<ValueTypes> = [],
+    error: Error
+  ): Promise<T> {
+    const r = await this.query<T>(statement, values)
+    return exactlyOneResult(r.rows, error)
+  }
+
+  public async many<T>(
+    statement: QueryInterface<Tables>,
+    values: Array<ValueTypes> = []
+  ): Promise<T[]> {
+    const r = await this.query<T>(statement, values)
+    return r.rows
+  }
+
+  public async query<T>(statement: QueryInterface<Tables>, values?: any[]) {
+    const query = typeof statement === 'string' ? statement : statement({
+      cf: this.createFields,
+      sf: this.selectFields
+    })
+    return await this.pool.query<T>(query, values)
   }
 
   public async close() {
@@ -65,6 +87,23 @@ export class TypedPostgresPool<Tables extends { [key: string]: any }, CustomType
       this.logger.error(`Unable to connect to server with ${this.dbCredentials.host}, exiting server`)
       process.exit(1)
     }
+  }
+
+  public createFields<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, alias?: string) {
+    const r = fields.reduce((r, field) => {
+      r.push(`'${field}'`)
+      r.push(`"${alias}".${snakeCase(field as string)}`)
+      return r
+    }, [] as string[])
+    return r.join(',')
+  }
+
+  private selectFields<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, alias?: string) {
+    const r = fields.reduce((r, field) => {
+      r.push(`"${alias}".${snakeCase(field as string)}`)
+      return r
+    }, [] as string[])
+    return r.join(',')
   }
 
 }

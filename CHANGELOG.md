@@ -1,5 +1,12 @@
 ## 22.08.2021
 
+### 0.0.3
+
+feat: createFields and selectFields now part of query statement to hide away typesript
+generatic
+
+## 22.08.2021
+
 ### 0.0.2
 
 refactor: removing postgres migrations dependency as it shouldn't be part of this module

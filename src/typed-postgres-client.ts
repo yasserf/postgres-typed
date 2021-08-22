@@ -3,7 +3,7 @@ import * as pg from 'pg'
 import { QueryResult } from 'pg'
 
 import { snakeCase } from 'snake-case'
-import { createBulkInsert, createInsert, exactlyOneResult, getFilters, Logger, sanitizeResult, selectFields, ValueTypes } from './database-utils'
+import { createBulkInsert, createInsert, exactlyOneResult, getFilters, Logger, QueryInterface, sanitizeResult, ValueTypes } from './database-utils'
 import { TypedPostgresPool } from './typed-postgres-pool'
 
 export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTypes> {
@@ -24,16 +24,16 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
    * @param fields 
    * @param filters 
    */
-     public async crudGetAll <N extends keyof Tables, T extends Tables[N]>(table: N, filters: Partial<Record<keyof T, ValueTypes>> | FilterSubExpressions): Promise<T[]>
-     public async crudGetAll <N extends keyof Tables, T extends Tables[N]>(table: N, filters: Partial<Record<keyof T, ValueTypes>> | FilterSubExpressions, notSingleError: Error): Promise<T> 
-     public async crudGetAll <N extends keyof Tables, T extends Tables[N]>(table: N, filters: Partial<Record<keyof T, ValueTypes>> | FilterSubExpressions, notSingleError?: undefined | Error): Promise<T | T[]> {
-       const { filter, filterValues } = getFilters(filters)
-       const result = await this.query<T>(`SELECT * FROM "app"."${table}" ${filter}`, filterValues)
-       if (notSingleError) {
-         return sanitizeResult(exactlyOneResult(result.rows, notSingleError))
-       }
-       return result.rows
-     }
+  public async crudGetAll<N extends keyof Tables, T extends Tables[N]>(table: N, filters: Partial<Record<keyof T, ValueTypes>> | FilterSubExpressions): Promise<T[]>
+  public async crudGetAll<N extends keyof Tables, T extends Tables[N]>(table: N, filters: Partial<Record<keyof T, ValueTypes>> | FilterSubExpressions, notSingleError: Error): Promise<T>
+  public async crudGetAll<N extends keyof Tables, T extends Tables[N]>(table: N, filters: Partial<Record<keyof T, ValueTypes>> | FilterSubExpressions, notSingleError?: undefined | Error): Promise<T | T[]> {
+    const { filter, filterValues } = getFilters(filters)
+    const result = await this.query<T>(`SELECT * FROM "app"."${table}" ${filter}`, filterValues)
+    if (notSingleError) {
+      return sanitizeResult(exactlyOneResult(result.rows, notSingleError))
+    }
+    return result.rows
+  }
 
   /**
    * 
@@ -41,12 +41,12 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
    * @param fields 
    * @param filters 
    */
-  public async crudGet <N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, filters: Partial<Record<keyof T, ValueTypes>> | FilterSubExpressions): Promise<Pick<T, typeof fields[number]>[]> 
-  public async crudGet <N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, filters: Partial<Record<keyof T, ValueTypes>> | FilterSubExpressions, notSingleError: Error): Promise<Pick<T, typeof fields[number]>> 
-  public async crudGet <N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, filters: Partial<Record<keyof T, ValueTypes>> | FilterSubExpressions, notSingleError?: undefined | Error): Promise<Pick<T, typeof fields[number]> | Pick<T, typeof fields[number]>[]> {
+  public async crudGet<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, filters: Partial<Record<keyof T, ValueTypes>> | FilterSubExpressions): Promise<Pick<T, typeof fields[number]>[]>
+  public async crudGet<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, filters: Partial<Record<keyof T, ValueTypes>> | FilterSubExpressions, notSingleError: Error): Promise<Pick<T, typeof fields[number]>>
+  public async crudGet<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, filters: Partial<Record<keyof T, ValueTypes>> | FilterSubExpressions, notSingleError?: undefined | Error): Promise<Pick<T, typeof fields[number]> | Pick<T, typeof fields[number]>[]> {
     const { filter, filterValues } = getFilters(filters)
-    const result = await this.query<Pick<T, typeof fields[number]>>(`
-      SELECT ${selectFields<T>(fields, table as string)}
+    const result = await this.query<Pick<T, typeof fields[number]>>(({ sf }) => `
+      SELECT ${sf(table, fields, table as string)}
       FROM "app"."${table}"
       ${filter}
     `, filterValues)
@@ -61,9 +61,9 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
    * @param table 
    * @param insert 
    */
-  public async crudBulkInsert <N extends keyof Tables, T extends Tables[N]>(table: N, insert: Partial<Record<keyof T, ValueTypes | CustomTypes>>[]): Promise<void>
-  public async crudBulkInsert <N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, insert: Partial<Record<keyof T, ValueTypes | CustomTypes>>[], returns: readonly (keyof T)[]): Promise<Record<keyof T, any>[]>
-  public async crudBulkInsert <N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, insert: Partial<Record<keyof T, ValueTypes | CustomTypes>>[], returns?: readonly (keyof T)[]): Promise<void | Record<keyof T, any>[]> {
+  public async crudBulkInsert<N extends keyof Tables, T extends Tables[N]>(table: N, insert: Partial<Record<keyof T, ValueTypes | CustomTypes>>[]): Promise<void>
+  public async crudBulkInsert<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, insert: Partial<Record<keyof T, ValueTypes | CustomTypes>>[], returns: readonly (keyof T)[]): Promise<Record<keyof T, any>[]>
+  public async crudBulkInsert<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, insert: Partial<Record<keyof T, ValueTypes | CustomTypes>>[], returns?: readonly (keyof T)[]): Promise<void | Record<keyof T, any>[]> {
     const [keys, values, realValues] = createBulkInsert(insert as any)
     if (returns) {
       const returnStatement = (returns || []).map(key => snakeCase(key.toString())).join(',')
@@ -79,9 +79,9 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
    * @param table 
    * @param insert 
    */
-  public async crudInsert <N extends keyof Tables, T extends Tables[N]>(table: N, insert: Partial<Record<keyof T, ValueTypes | CustomTypes>>, returns?: []): Promise<void>
-  public async crudInsert <N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, insert: Partial<Record<keyof T, ValueTypes | CustomTypes>>, returns: F): Promise<Pick<T, typeof returns[number]>> 
-  public async crudInsert <N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, insert: Partial<Record<keyof T, ValueTypes | CustomTypes>>, returns: F): Promise<void | Pick<T, typeof returns[number]>> {
+  public async crudInsert<N extends keyof Tables, T extends Tables[N]>(table: N, insert: Partial<Record<keyof T, ValueTypes | CustomTypes>>, returns?: []): Promise<void>
+  public async crudInsert<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, insert: Partial<Record<keyof T, ValueTypes | CustomTypes>>, returns: F): Promise<Pick<T, typeof returns[number]>>
+  public async crudInsert<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, insert: Partial<Record<keyof T, ValueTypes | CustomTypes>>, returns: F): Promise<void | Pick<T, typeof returns[number]>> {
     const [keys, values, realValues] = createInsert(insert as any)
     if (returns) {
       const returnStatement = returns.map(key => snakeCase(key.toString())).join(',')
@@ -99,7 +99,7 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
    * @param error 
    * @returns Void
    */
-  public async crudUpdate <N extends keyof Tables, T extends Tables[N]>(table: N, update: Partial<Record<keyof T, ValueTypes | CustomTypes>>, filters: Partial<Record<keyof T, ValueTypes>>, error?: Error): Promise<void> {
+  public async crudUpdate<N extends keyof Tables, T extends Tables[N]>(table: N, update: Partial<Record<keyof T, ValueTypes | CustomTypes>>, filters: Partial<Record<keyof T, ValueTypes>>, error?: Error): Promise<void> {
     if (Object.keys(update).length === 0) {
       return
     }
@@ -114,7 +114,7 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
       throw error
     }
   }
-  
+
   /**
    * 
    * @param table 
@@ -122,10 +122,10 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
    * @param notSingleError 
    * @returns 
    */
-  public async crudDelete <N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, filters: Partial<Record<keyof T, ValueTypes>>, returns: undefined): Promise<void>
-  public async crudDelete <N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, filters: Partial<Record<keyof T, ValueTypes>>, returns: F): Promise<Pick<T, typeof returns[number]>[]>
-  public async crudDelete <N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, filters: Partial<Record<keyof T, ValueTypes>>, returns: F | [], notSingleError: Error): Promise<void | Pick<T, typeof returns[number]>>
-  public async crudDelete <N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, filters: Partial<Record<keyof T, ValueTypes>>, returns: F = [] as unknown as F, notSingleError?: Error): Promise<void | Pick<T, typeof returns[number]> | Pick<T, typeof returns[number]>[]> {
+  public async crudDelete<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, filters: Partial<Record<keyof T, ValueTypes>>, returns: undefined): Promise<void>
+  public async crudDelete<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, filters: Partial<Record<keyof T, ValueTypes>>, returns: F): Promise<Pick<T, typeof returns[number]>[]>
+  public async crudDelete<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, filters: Partial<Record<keyof T, ValueTypes>>, returns: F | [], notSingleError: Error): Promise<void | Pick<T, typeof returns[number]>>
+  public async crudDelete<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, filters: Partial<Record<keyof T, ValueTypes>>, returns: F = [] as unknown as F, notSingleError?: Error): Promise<void | Pick<T, typeof returns[number]> | Pick<T, typeof returns[number]>[]> {
     const { filter, filterValues } = getFilters(filters)
     if (returns) {
       const r = await this.query<Pick<T, typeof returns[number]>>(`DELETE FROM "app"."${table}" RETURNING ${returns.join(',')}, ${filter}`, filterValues)
@@ -141,22 +141,22 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
     }
   }
 
-  public async debugQuery <T = { rows: unknown[] }>(
-    statement: string,
+  public async debugQuery<T = { rows: unknown[] }>(
+    statement: QueryInterface<Tables>,
     values: Array<ValueTypes> = []
   ): Promise<QueryResult<T>> {
     return await this._query<T>(statement, values, 'debug')
   }
 
-  public async query <T = { rows: unknown[] }>(
-    statement: string,
+  public async query<T = { rows: unknown[] }>(
+    statement: QueryInterface<Tables>,
     values: Array<ValueTypes> = []
   ): Promise<QueryResult<T>> {
     return await this._query<T>(statement, values)
   }
 
-  public async one <T>(
-    statement: string,
+  public async one<T>(
+    statement: QueryInterface<Tables>,
     values: Array<ValueTypes> = [],
     error: Error
   ): Promise<T> {
@@ -164,8 +164,8 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
     return exactlyOneResult(r.rows, error)
   }
 
-  public async many <T>(
-    statement: string,
+  public async many<T>(
+    statement: QueryInterface<Tables>,
     values: Array<ValueTypes> = []
   ): Promise<T[]> {
     const r = await this._query<T>(statement, values)
@@ -173,28 +173,32 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
   }
 
   private async _query<T = { rows: unknown[] }>(
-    statement: string,
+    statement: QueryInterface<Tables>,
     values: Array<ValueTypes> = [],
     debug?: 'debug',
   ): Promise<QueryResult<T>> {
-    statement = statement.replace(/^\s*[\r\n]/gm, '')
+    let query = typeof statement === 'string' ? statement : statement({
+      cf: this.createFields,
+      sf: this.selectFields
+    })
+    query = query.replace(/^\s*[\r\n]/gm, '')
     if (debug) {
-      this.logger.info(`\nExecuting:\n  Query: ${statement}\n  Values:\n ${values}\n'`)
+      this.logger.info(`\nExecuting:\n  Query: ${query}\n  Values:\n ${values}\n'`)
     }
 
     if (!this.client) {
-      return await this.transaction(async () => this._query(statement, values, debug))
+      return await this.transaction(async () => this._query(query, values, debug))
     }
 
     const start = Date.now()
     return await new Promise<QueryResult<T>>((resolve, reject) => {
-      this.client!.query<T>(statement, values, (err, res) => {
+      this.client!.query<T>(query, values, (err, res) => {
         if (err) {
           if (err.message.includes('user_auth_email_key')) {
             this.logger.error(`Error inserting data with duplicated email: ${JSON.stringify(values)}`)
           } else {
             const errorId = Math.random().toString().substr(2)
-            console.error(`Error ${errorId} running statement:`, statement, 'with values', JSON.stringify(values))
+            console.error(`Error ${errorId} running statement:`, query, 'with values', JSON.stringify(values))
             this.logger.error(`Error running sql statement ${errorId} ${err.message}`, { errorId })
           }
           reject(err)
@@ -205,7 +209,7 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
           const duration = Date.now() - start
           this.logger.info(
             `executed query ${JSON.stringify({
-              statement,
+              query,
               duration,
               rows: res.rowCount,
             })}`,
@@ -216,7 +220,24 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
     })
   }
 
-  public async transaction<T>(fn:(() => Promise<T>)):Promise<T> {
+  public createFields<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, alias?: string) {
+    const r = fields.reduce((r, field) => {
+      r.push(`'${field}'`)
+      r.push(`"${alias}".${snakeCase(field as string)}`)
+      return r
+    }, [] as string[])
+    return r.join(',')
+  }
+
+  private selectFields<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, alias?: string) {
+    const r = fields.reduce((r, field) => {
+      r.push(`"${alias}".${snakeCase(field as string)}`)
+      return r
+    }, [] as string[])
+    return r.join(',')
+  }
+
+  public async transaction<T>(fn: (() => Promise<T>)): Promise<T> {
     if (this.client) {
       return await fn()
     }
@@ -238,4 +259,3 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
     }
   }
 }
-
