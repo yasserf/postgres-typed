@@ -1,6 +1,6 @@
 {
   "name": "typed-postgres",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "author": "Vlandor LTD",
   "license": "MIT",
   "main": "dist",
@@ -14,6 +14,7 @@
     "@vramework/generic": "^0.0.0",
     "pg": "^8.6.0",
     "pino": "^6.13.0",
+    "pg-camelcase": "^0.0.3",
     "postgres-migrations": "^5.1.1",
     "snake-case": "^3.0.4"
   },
