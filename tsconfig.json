@@ -6,7 +6,7 @@
     "sourceMap": true,
     "noEmit": false,
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDirs": ["src", "example"],
     "noUnusedLocals": true,
     "strict": true,
     "lib": [

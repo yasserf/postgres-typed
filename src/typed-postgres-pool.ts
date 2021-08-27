@@ -23,9 +23,9 @@ export class TypedPostgresPool<Tables extends { [key: string]: any }, CustomType
     return this.pool.connect()
   }
 
-  public async crudGetAll<N extends keyof Tables, T extends Tables[N]>(table: N, filters: Partial<Record<keyof T, ValueTypes>> | FilterSubExpressions): Promise<T[]>
-  public async crudGetAll<N extends keyof Tables, T extends Tables[N]>(table: N, filters: Partial<Record<keyof T, ValueTypes>> | FilterSubExpressions, notSingleError: Error): Promise<T>
-  public async crudGetAll<N extends keyof Tables, T extends Tables[N]>(table: N, filters: Partial<Record<keyof T, ValueTypes>> | FilterSubExpressions, notSingleError?: undefined | Error): Promise<T | T[]> {
+  public async crudGetAll<N extends keyof Tables, T extends Tables[N]>(table: N, filters: Partial<T> | FilterSubExpressions): Promise<T[]>
+  public async crudGetAll<N extends keyof Tables, T extends Tables[N]>(table: N, filters: Partial<T> | FilterSubExpressions, notSingleError: Error): Promise<T>
+  public async crudGetAll<N extends keyof Tables, T extends Tables[N]>(table: N, filters: Partial<T> | FilterSubExpressions, notSingleError?: undefined | Error): Promise<T | T[]> {
     const { filter, filterValues } = getFilters(filters)
     const result = await this.query<T>(`SELECT * FROM "app"."${table}" ${filter}`, filterValues)
     if (notSingleError) {
@@ -34,9 +34,9 @@ export class TypedPostgresPool<Tables extends { [key: string]: any }, CustomType
     return result.rows
   }
 
-  public async crudGet<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, filters: Partial<Record<keyof T, ValueTypes>> | FilterSubExpressions): Promise<Pick<T, typeof fields[number]>[]>
-  public async crudGet<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, filters: Partial<Record<keyof T, ValueTypes>> | FilterSubExpressions, notSingleError: Error): Promise<Pick<T, typeof fields[number]>>
-  public async crudGet<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, filters: Partial<Record<keyof T, ValueTypes>> | FilterSubExpressions, notSingleError?: undefined | Error): Promise<Pick<T, typeof fields[number]> | Pick<T, typeof fields[number]>[]> {
+  public async crudGet<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, filters: Partial<T> | FilterSubExpressions): Promise<Pick<T, typeof fields[number]>[]>
+  public async crudGet<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, filters: Partial<T> | FilterSubExpressions, notSingleError: Error): Promise<Pick<T, typeof fields[number]>>
+  public async crudGet<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, filters: Partial<T> | FilterSubExpressions, notSingleError?: undefined | Error): Promise<Pick<T, typeof fields[number]> | Pick<T, typeof fields[number]>[]> {
     const { filter, filterValues } = getFilters(filters)
     const result = await this.query<Pick<T, typeof fields[number]>>(({ sf }) => `
       SELECT ${sf(table, fields)}

@@ -1,3 +1,9 @@
+## 27.08.2021
+
+### 0.0.4
+
+doc: Adding readme and fixing some types
+
 ## 22.08.2021
 
 ### 0.0.3
