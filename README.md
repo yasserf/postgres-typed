@@ -16,9 +16,18 @@ to describe your database types and then use those to help developers do most da
 
 This library isn't meant to compete with any ORM, and can't even be seen as a diet version of (slonik)(https://github.com/gajus/slonik). This library is more of just a way for developers who like using [pg-node]() to continue doing so with some typescript support.
 
+
 Example code helps best tho:
 
-Assuming the following SQL:
+![walkthrough](./walkthrough.gif)
+
+Setting up requires:
+
+- A postgres db
+- Schemats
+- This library
+
+Given the following SQL:
 
 ```sql
 CREATE TYPE "pet_store"."animal" AS enum (
@@ -78,11 +87,8 @@ export interface Tables {
 export type CustomTypes = RandomPetFacts
 ```
 
-We can now do the following:
 
-[walkthrough](./walkthrough.gif)
-
-Or if you want to see it:
+And then just pass those types to the postgres driver:
 
 ```typescript
 import pino from 'pino'
