@@ -1,5 +1,11 @@
 ## 28.08.2021
 
+### 0.0.6
+
+fix: Fixing an error where SQL is invalid regressions from new type discovered by upgrading enjamon library)
+
+## 28.08.2021
+
 ### 0.0.5
 
 fix: Fixing an error where it tries to return values when none are provided in delete func

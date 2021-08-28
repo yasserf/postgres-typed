@@ -135,7 +135,7 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
       return r.rows
     }
 
-    const result = await this.query<void>(`DELETE FROM "app"."${table}", ${filter}`, filterValues)
+    const result = await this.query<void>(`DELETE FROM "app"."${table}" ${filter}`, filterValues)
     if (notSingleError && result.rowCount !== 1) {
       exactlyOneResult(result.rows, notSingleError)
     }
