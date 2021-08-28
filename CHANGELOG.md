@@ -1,3 +1,9 @@
+## 28.08.2021
+
+### 0.0.5
+
+fix: Fixing an error where it tries to return values when none are provided in delete func
+
 ## 27.08.2021
 
 ### 0.0.4

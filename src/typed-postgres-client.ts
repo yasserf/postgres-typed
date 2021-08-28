@@ -122,12 +122,12 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
    * @param notSingleError 
    * @returns 
    */
-  public async crudDelete<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, filters: Partial<T>, returns: undefined): Promise<void>
+  public async crudDelete<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, filters: Partial<T>): Promise<void>
   public async crudDelete<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, filters: Partial<T>, returns: F, notSingleError: Error): Promise<Pick<T, typeof returns[number]>>
   public async crudDelete<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, filters: Partial<T>, returns: F | [], notSingleError: Error): Promise<void | Pick<T, typeof returns[number]>>
   public async crudDelete<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, filters: Partial<T>, returns: F = [] as unknown as F, notSingleError?: Error): Promise<void | Pick<T, typeof returns[number]> | Pick<T, typeof returns[number]>[]> {
     const { filter, filterValues } = getFilters(filters)
-    if (returns) {
+    if (returns.length > 1) {
       const r = await this.query<Pick<T, typeof returns[number]>>(`DELETE FROM "app"."${table}" RETURNING ${returns.join(',')}, ${filter}`, filterValues)
       if (notSingleError) {
         return exactlyOneResult(r.rows, notSingleError)
