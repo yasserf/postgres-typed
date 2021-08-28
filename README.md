@@ -240,7 +240,7 @@ Theres actually some further functionality such as:
   to be honest the code becomes repetitive and having a simple query builder helps alot.
  - pools also have crudGet / crudGetAll / query API since you don't need a specific client nor transaction
 
-### Production usage
+### Production usage
 
 Use with a tablespoon of salt. I have been using this in production for over a year and it works fine, but I rely on schemas and filter validation on a higher API level
 
