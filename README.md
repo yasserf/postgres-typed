@@ -12,9 +12,9 @@ Design Principles:
 # The idea behind the library
 
 The general idea behind the library is to combine the power of [shemats](https://github.com/vramework/schemats)
-to describe your database types and then use those to help developers do most database commands.
+to describe your database types and then use those to help developers do simple database commands.
 
-This library isn't meant to compete with any ORM, and can't even be seen as a diet version of (slonik)(https://github.com/gajus/slonik). This library is more of just a way for developers who like using [pg-node]() to continue doing so with some typescript support.
+This library isn't meant to compete with any ORM, and can't even be seen as a diet version of [slonik](https://github.com/gajus/slonik). This library is more of just a way for developers who like using [pg-node](https://www.npmjs.com/package/pg) to continue doing so with some typescript support.
 
 
 Example code helps best tho:
