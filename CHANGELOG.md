@@ -1,3 +1,9 @@
+## 30.08.2021
+
+### 0.0.7
+
+fix: Transform values on insert/update
+
 ## 28.08.2021
 
 ### 0.0.6
