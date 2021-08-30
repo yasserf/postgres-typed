@@ -3,7 +3,7 @@ import * as pg from 'pg'
 import { QueryResult } from 'pg'
 
 import { snakeCase } from 'snake-case'
-import { createBulkInsert, createInsert, exactlyOneResult, getFilters, Logger, QueryInterface, sanitizeResult, ValueTypes } from './database-utils'
+import { createBulkInsert, createInsert, exactlyOneResult, getFilters, Logger, QueryInterface, sanitizeResult, transformValues, ValueTypes } from './database-utils'
 import { TypedPostgresPool } from './typed-postgres-pool'
 
 export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTypes> {
@@ -82,7 +82,7 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
   public async crudInsert<N extends keyof Tables, T extends Tables[N]>(table: N, insert: Partial<Record<keyof T, ValueTypes | CustomTypes>>, returns?: []): Promise<void>
   public async crudInsert<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, insert: Partial<Record<keyof T, ValueTypes | CustomTypes>>, returns: F): Promise<Pick<T, typeof returns[number]>>
   public async crudInsert<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, insert: Partial<Record<keyof T, ValueTypes | CustomTypes>>, returns: F): Promise<void | Pick<T, typeof returns[number]>> {
-    const [keys, values, realValues] = createInsert(insert as any)
+    const [keys, values, realValues] = createInsert(transformValues(insert))
     if (returns) {
       const returnStatement = returns.map(key => snakeCase(key.toString())).join(',')
       return await this.one<Pick<T, typeof returns[number]>>(`INSERT INTO "app".${table}(${keys}) VALUES (${values}) RETURNING ${returnStatement};`, realValues, new Error())
@@ -104,7 +104,7 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
       return
     }
     const { filter, filterValues } = getFilters(filters)
-    const [keys, values, realValues] = createInsert(update as any, filterValues.length)
+    const [keys, values, realValues] = createInsert(transformValues(update), filterValues.length)
     const result = await this.query(`
         UPDATE "app".${table}
         SET (${keys}) = row(${values})

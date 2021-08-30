@@ -32,7 +32,7 @@ export const getFilters = (filters: Record<string, ValueTypes> | FilterSubExpres
   }
 }
 
-// This is definately not production usages
+// This is definately not production ready
 export const createBulkInsert = (
   bulk: Record<string, ValueTypes>[],
 ): [string, string, Array<string | number | null | Date>] => {
@@ -40,6 +40,7 @@ export const createBulkInsert = (
   const keys: string[] = []
   const values: string[] = []
   const realValues = bulk.map((data) => {
+    data = transformValues(data)
     Object.keys(data).forEach((key) => {
       if (!keys.includes(key)) {
         keys.push(key)
@@ -65,7 +66,7 @@ export const createInsert = (
 export const transformValues = (from: any): Record<string, number | string | null> => {
   return Object.keys(from).reduce((r, k) => {
     const value = from[k]
-    if (typeof value === 'number' || typeof value === 'string' || value === null) {
+    if (typeof value === 'number' || typeof value === 'string' || value === null || value === Date) {
       r[k] = value
     } else if (value instanceof Array && k === 'tags') {
       r[k] = `{ ${value.join(',')}}`
