@@ -220,7 +220,7 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
     })
   }
 
-  public createFields<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, alias?: string) {
+  public createFields<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, alias: string = table as string) {
     const r = fields.reduce((r, field) => {
       r.push(`'${field}'`)
       r.push(`"${alias}".${snakeCase(field as string)}`)
@@ -229,7 +229,7 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
     return r.join(',')
   }
 
-  private selectFields<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, alias?: string) {
+  private selectFields<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, alias: string = table as string) {
     const r = fields.reduce((r, field) => {
       r.push(`"${alias}".${snakeCase(field as string)}`)
       return r
@@ -245,7 +245,7 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
     try {
       await this.query('BEGIN;')
       if (this.userId) {
-        await this.query(`SET SESSION "session.user_id" = '${this.userId}'`)
+        await this.query(`SET LOCAL "session.user_id" = '${this.userId}'`)
       }
       const result = await fn()
       await this.query('COMMIT;')
