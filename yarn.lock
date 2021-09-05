@@ -40,12 +40,11 @@
     "@types/pino-std-serializers" "*"
     sonic-boom "^2.1.0"
 
-"@vramework/generic@^0.0.0":
-  version "0.0.0"
-  resolved "https://registry.yarnpkg.com/@vramework/generic/-/generic-0.0.0.tgz#6b9bca61beae1044f6d5dcc60e2bc6d6ec5763db"
-  integrity sha512-Xk+DKpqF/xPHuaraibu+Bvo0OCZ9rHd+nPIp4BJwZv3XS2CCt65KL11b2q62NdSRur/PjHgSXAS9UtZyRmNQxA==
+"@vramework/generic@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@vramework/generic/-/generic-0.0.3.tgz#256e0af41692587abb991c9d84be53447bbb0e15"
+  integrity sha512-6WTnZHUCUnheJL667ThFeUoQ/+rTaXc2Kx+8Gkp9ZH7w4EcEmgOB3Dm99GpXwhylFqbISdPN+HusecH4aPH5Ag==
   dependencies:
-    "@vramework/generic" "^0.0.0"
     node-fetch "^2.6.1"
 
 "@vramework/schemats@latest":
