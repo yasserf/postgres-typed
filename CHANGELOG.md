@@ -1,5 +1,11 @@
 ## 05.08.2021
 
+### 0.0.9
+
+fix: default alias to table if one isn't provided in query builder
+
+## 05.08.2021
+
 ### 0.0.8
 
 chore: bumping up deps
