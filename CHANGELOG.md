@@ -1,6 +1,6 @@
 ## 19.02.2022
 
-### 0.0.10
+### 0.0.11
 
 chore: upgrading dependencies
 
