@@ -27,7 +27,7 @@ export class TypedPostgresPool<Tables extends { [key: string]: any }, CustomType
   public async crudGetAll<N extends keyof Tables, T extends Tables[N]>(table: N, filters: Partial<T> | FilterSubExpressions, notSingleError: Error): Promise<T>
   public async crudGetAll<N extends keyof Tables, T extends Tables[N]>(table: N, filters: Partial<T> | FilterSubExpressions, notSingleError?: undefined | Error): Promise<T | T[]> {
     const { filter, filterValues } = getFilters(filters)
-    const result = await this.query<T>(`SELECT * FROM "app"."${table}" ${filter}`, filterValues)
+    const result = await this.query<T>(`SELECT * FROM "app"."${String(table)}" ${filter}`, filterValues)
     if (notSingleError) {
       return sanitizeResult(exactlyOneResult(result.rows, notSingleError))
     }
@@ -40,7 +40,7 @@ export class TypedPostgresPool<Tables extends { [key: string]: any }, CustomType
     const { filter, filterValues } = getFilters(filters)
     const result = await this.query<Pick<T, typeof fields[number]>>(({ sf }) => `
       SELECT ${sf(table, fields)}
-      FROM "app"."${table}"
+      FROM "app"."${String(table)}"
       ${filter}
     `, filterValues)
     if (notSingleError) {
@@ -91,7 +91,7 @@ export class TypedPostgresPool<Tables extends { [key: string]: any }, CustomType
 
   public createFields<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, alias?: string) {
     const r = fields.reduce((r, field) => {
-      r.push(`'${field}'`)
+      r.push(`'${String(field)}'`)
       r.push(`"${alias}".${snakeCase(field as string)}`)
       return r
     }, [] as string[])

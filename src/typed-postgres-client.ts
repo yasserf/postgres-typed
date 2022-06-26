@@ -28,7 +28,7 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
   public async crudGetAll<N extends keyof Tables, T extends Tables[N]>(table: N, filters: Partial<T> | FilterSubExpressions, notSingleError: Error): Promise<T>
   public async crudGetAll<N extends keyof Tables, T extends Tables[N]>(table: N, filters: Partial<T> | FilterSubExpressions, notSingleError?: undefined | Error): Promise<T | T[]> {
     const { filter, filterValues } = getFilters(filters)
-    const result = await this.query<T>(`SELECT * FROM "app"."${table}" ${filter}`, filterValues)
+    const result = await this.query<T>(`SELECT * FROM "app"."${String(table)}" ${filter}`, filterValues)
     if (notSingleError) {
       return sanitizeResult(exactlyOneResult(result.rows, notSingleError))
     }
@@ -47,7 +47,7 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
     const { filter, filterValues } = getFilters(filters)
     const result = await this.query<Pick<T, typeof fields[number]>>(({ sf }) => `
       SELECT ${sf(table, fields, table as string)}
-      FROM "app"."${table}"
+      FROM "app"."${String(table)}"
       ${filter}
     `, filterValues)
     if (notSingleError) {
@@ -67,10 +67,10 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
     const [keys, values, realValues] = createBulkInsert(insert as any)
     if (returns) {
       const returnStatement = (returns || []).map(key => snakeCase(key.toString())).join(',')
-      const result = await this.query<Pick<T, typeof returns[number]>>(`INSERT INTO "app".${table}(${keys}) VALUES ${values} RETURNING ${returnStatement};`, realValues)
+      const result = await this.query<Pick<T, typeof returns[number]>>(`INSERT INTO "app".${String(table)}(${keys}) VALUES ${values} RETURNING ${returnStatement};`, realValues)
       return result.rows
     } else {
-      await this.query(`INSERT INTO "app".${table}(${keys}) VALUES ${values}`, realValues)
+      await this.query(`INSERT INTO "app".${String(table)}(${keys}) VALUES ${values}`, realValues)
     }
   }
 
@@ -85,9 +85,9 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
     const [keys, values, realValues] = createInsert(transformValues(insert))
     if (returns) {
       const returnStatement = returns.map(key => snakeCase(key.toString())).join(',')
-      return await this.one<Pick<T, typeof returns[number]>>(`INSERT INTO "app".${table}(${keys}) VALUES (${values}) RETURNING ${returnStatement};`, realValues, new Error())
+      return await this.one<Pick<T, typeof returns[number]>>(`INSERT INTO "app".${String(table)}(${keys}) VALUES (${values}) RETURNING ${returnStatement};`, realValues, new Error())
     } else {
-      await this.query(`INSERT INTO "app".${table}(${keys}) VALUES (${values})`, realValues)
+      await this.query(`INSERT INTO "app".${String(table)}(${keys}) VALUES (${values})`, realValues)
     }
   }
 
@@ -106,7 +106,7 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
     const { filter, filterValues } = getFilters(filters)
     const [keys, values, realValues] = createInsert(transformValues(update), filterValues.length)
     const result = await this.query(`
-        UPDATE "app".${table}
+        UPDATE "app".${String(table)}
         SET (${keys}) = row(${values})
         ${filter}
     `, [...filterValues, ...realValues])
@@ -128,14 +128,14 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
   public async crudDelete<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, filters: Partial<T>, returns: F = [] as unknown as F, notSingleError?: Error): Promise<void | Pick<T, typeof returns[number]> | Pick<T, typeof returns[number]>[]> {
     const { filter, filterValues } = getFilters(filters)
     if (returns.length > 1) {
-      const r = await this.query<Pick<T, typeof returns[number]>>(`DELETE FROM "app"."${table}" RETURNING ${returns.join(',')}, ${filter}`, filterValues)
+      const r = await this.query<Pick<T, typeof returns[number]>>(`DELETE FROM "app"."${String(table)}" RETURNING ${returns.join(',')}, ${filter}`, filterValues)
       if (notSingleError) {
         return exactlyOneResult(r.rows, notSingleError)
       }
       return r.rows
     }
 
-    const result = await this.query<void>(`DELETE FROM "app"."${table}" ${filter}`, filterValues)
+    const result = await this.query<void>(`DELETE FROM "app"."${String(table)}" ${filter}`, filterValues)
     if (notSingleError && result.rowCount !== 1) {
       exactlyOneResult(result.rows, notSingleError)
     }
@@ -222,7 +222,7 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
 
   public createFields<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, alias: string = table as string) {
     const r = fields.reduce((r, field) => {
-      r.push(`'${field}'`)
+      r.push(`'${String(field)}'`)
       r.push(`"${alias}".${snakeCase(field as string)}`)
       return r
     }, [] as string[])
