@@ -8,7 +8,7 @@ export class TypedPostgresPool<Tables extends { [key: string]: any }, CustomType
   public pool: Pool
   public client!: pg.PoolClient
 
-  constructor(private dbCredentials: pg.PoolConfig, private logger: Logger) {
+  constructor(private dbCredentials: pg.PoolConfig, private logger: Logger, public schema: string) {
     this.logger.info(`Using db host: ${dbCredentials.host}`)
     this.pool = new Pool(dbCredentials)
   }
@@ -27,7 +27,7 @@ export class TypedPostgresPool<Tables extends { [key: string]: any }, CustomType
   public async crudGetAll<N extends keyof Tables, T extends Tables[N]>(table: N, filters: Partial<T> | FilterSubExpressions, notSingleError: Error): Promise<T>
   public async crudGetAll<N extends keyof Tables, T extends Tables[N]>(table: N, filters: Partial<T> | FilterSubExpressions, notSingleError?: undefined | Error): Promise<T | T[]> {
     const { filter, filterValues } = getFilters(filters)
-    const result = await this.query<T>(`SELECT * FROM "app"."${String(table)}" ${filter}`, filterValues)
+    const result = await this.query<T>(`SELECT * FROM "${this.schema}"."${String(table)}" ${filter}`, filterValues)
     if (notSingleError) {
       return sanitizeResult(exactlyOneResult(result.rows, notSingleError))
     }
@@ -40,7 +40,7 @@ export class TypedPostgresPool<Tables extends { [key: string]: any }, CustomType
     const { filter, filterValues } = getFilters(filters)
     const result = await this.query<Pick<T, typeof fields[number]>>(({ sf }) => `
       SELECT ${sf(table, fields)}
-      FROM "app"."${String(table)}"
+      FROM "${this.schema}"."${String(table)}"
       ${filter}
     `, filterValues)
     if (notSingleError) {

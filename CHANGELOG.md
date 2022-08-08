@@ -1,3 +1,9 @@
+## 08.08.2022
+
+### 0.0.15
+
+feat: making specifying schema compulsory
+
 ## 26.06.2022
 
 ### 0.0.14

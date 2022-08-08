@@ -10,7 +10,7 @@ const main = async () => {
 
     // This creates 
     const connectionParams: pg.PoolConfig = {}
-    const pool = new TypedPostgresPool<Tables, CustomTypes>(connectionParams, logger)
+    const pool = new TypedPostgresPool<Tables, CustomTypes>(connectionParams, logger, 'app')
     const database = new TypedPostgresClient(pool, logger)
 
     // This is the pet uuid
