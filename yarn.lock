@@ -23,10 +23,10 @@
   dependencies:
     pino "*"
 
-"@vramework/generic@^0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@vramework/generic/-/generic-0.0.5.tgz#541273fb2f91927484e064da40e732f1d603aba6"
-  integrity sha512-MploihiH0nB5qIdMmHh43AkJgklrZ5iAg2RW72x/6V7k4/KvCUuy3nF4vr9eJyQBF2fxhLWZDCOt05zOh/AVpw==
+"@vramework/generic@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@vramework/generic/-/generic-0.0.6.tgz#0dfc939d7dc26a1ef9bbb7c66ac40375c0b0fed5"
+  integrity sha512-Hs42mMvbY0p6hrx+9zXyDHH16j0AZ8DYVxaokIUkF6Ypjh2GC/hyKFpz0A5eFiF9qD9CS6rDMx0TpRuHeW0iYw==
   dependencies:
     node-fetch "^2.6.1"
 
@@ -295,10 +295,10 @@ pino-std-serializers@^4.0.0:
   resolved "https://registry.yarnpkg.com/pino-std-serializers/-/pino-std-serializers-4.0.0.tgz#1791ccd2539c091ae49ce9993205e2cd5dbba1e2"
   integrity sha512-cK0pekc1Kjy5w9V2/n+8MkZwusa6EyyxfeQCB799CQRhRt/CqYKiWs5adeu8Shve2ZNffvfC/7J64A2PJo1W/Q==
 
-pino-std-serializers@^5.0.0:
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/pino-std-serializers/-/pino-std-serializers-5.6.0.tgz#31b141155d6520967c5ec72944d08fb45c490fd3"
-  integrity sha512-VdUXCw8gO+xhir7sFuoYSjTnzB+TMDGxhAC/ph3YS3sdHnXNdsK0wMtADNUltfeGkn2KDxEM21fnjF3RwXyC8A==
+pino-std-serializers@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/pino-std-serializers/-/pino-std-serializers-6.0.0.tgz#4c20928a1bafca122fdc2a7a4a171ca1c5f9c526"
+  integrity sha512-mMMOwSKrmyl+Y12Ri2xhH1lbzQxwwpuru9VjyJpgFIH4asSj88F2csdMwN6+M5g1Ll4rmsYghHLQJw81tgZ7LQ==
 
 pino@*:
   version "7.8.0"
@@ -316,22 +316,22 @@ pino@*:
     sonic-boom "^2.2.1"
     thread-stream "^0.13.0"
 
-pino@^8.1.0:
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/pino/-/pino-8.1.0.tgz#6211c5e77d813624f6707ec4750f4fbf778d5621"
-  integrity sha512-53jlxs+02UNTtF1XwVWfa0dHipBiM5GK73XhkHn8M2hUl9y3L94dNwB8BwQhpd5WdHjBkyJiO7v0LRt4SGgsPg==
+pino@^8.4.0:
+  version "8.4.0"
+  resolved "https://registry.yarnpkg.com/pino/-/pino-8.4.0.tgz#fb8622b70670068cc9d10ccf04c168580cef00c0"
+  integrity sha512-R95U66WOb4Ggtb1RPGnC2uvtc8T0i1FSbrKHrAudRtiLDrlNxKjM1MyCJu+V4gL0qdE/7/LoXAmkEY/TlX6ELA==
   dependencies:
     atomic-sleep "^1.0.0"
     fast-redact "^3.1.1"
     on-exit-leak-free "^2.1.0"
     pino-abstract-transport v1.0.0
-    pino-std-serializers "^5.0.0"
+    pino-std-serializers "^6.0.0"
     process-warning "^2.0.0"
     quick-format-unescaped "^4.0.3"
-    real-require "^0.1.0"
+    real-require "^0.2.0"
     safe-stable-stringify "^2.3.1"
-    sonic-boom "^3.0.0"
-    thread-stream "^1.0.0"
+    sonic-boom "^3.1.0"
+    thread-stream "^2.0.0"
 
 postgres-array@~2.0.0:
   version "2.0.0"
@@ -391,6 +391,11 @@ real-require@^0.1.0:
   resolved "https://registry.yarnpkg.com/real-require/-/real-require-0.1.0.tgz#736ac214caa20632847b7ca8c1056a0767df9381"
   integrity sha512-r/H9MzAWtrv8aSVjPCMFpDMl5q66GqtmmRkRjpHTsp4zBAa+snZyiQNlMONiUmEJcsnaw0wCauJ2GWODr/aFkg==
 
+real-require@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/real-require/-/real-require-0.2.0.tgz#209632dea1810be2ae063a6ac084fee7e33fba78"
+  integrity sha512-57frrGM/OCTLqLOAh0mhVA9VBMHd+9U7Zb2THMGdBUoZVOtGbJzjxsYGDJ3A9AYYCP4hn6y1TVbaOfzWtm5GFg==
+
 safe-buffer@~5.2.0:
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.2.1.tgz#1eaf9fa9bdb1fdd4ec75f58f9cdb4e6b7827eec6"
@@ -416,10 +421,10 @@ sonic-boom@^2.2.1:
   dependencies:
     atomic-sleep "^1.0.0"
 
-sonic-boom@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/sonic-boom/-/sonic-boom-3.0.0.tgz#235119a6606e2646919a27d83ef687f2ba6c0fba"
-  integrity sha512-p5DiZOZHbJ2ZO5MADczp5qrfOd3W5Vr2vHxfCpe7G4AzPwVOweIjbfgku8wSQUuk+Y5Yuo8W7JqRe6XKmKistg==
+sonic-boom@^3.1.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/sonic-boom/-/sonic-boom-3.2.0.tgz#ce9f2de7557e68be2e52c8df6d9b052e7d348143"
+  integrity sha512-SbbZ+Kqj/XIunvIAgUZRlqd6CGQYq71tRRbXR92Za8J/R3Yh4Av+TWENiSiEgnlwckYLyP0YZQWVfyNC0dzLaA==
   dependencies:
     atomic-sleep "^1.0.0"
 
@@ -461,12 +466,12 @@ thread-stream@^0.13.0:
   dependencies:
     real-require "^0.1.0"
 
-thread-stream@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/thread-stream/-/thread-stream-1.0.0.tgz#a7ba5c3defceb77c69deea6c3a62faf74891e4ba"
-  integrity sha512-2Sw29jWubQWOcVa7MhLHJ51wjksUD/GHN4Fy3hP9w9DYTujifoZGSKBl54CMLRXWoD5h2pD707kY3fAdzhcwAg==
+thread-stream@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/thread-stream/-/thread-stream-2.0.1.tgz#3fa74e2223e661a48f836494f7a64eeac5ac03c0"
+  integrity sha512-X7vWOdsHLkBq0si20ruEE2ttpS7WOVyD52xKu+TOjrRP9Qi9uB9ynHYpzZUbBptArBSuKYUn4mH+jEBnO2CRGg==
   dependencies:
-    real-require "^0.1.0"
+    real-require "^0.2.0"
 
 through@2:
   version "2.3.8"

@@ -12,10 +12,10 @@
     "example:schema": "schemats postgres postgres://postgres:password@localhost/schemats -s pet_store -o src/example/db-types.ts -f ./db-json-types -c -e"
   },
   "dependencies": {
-    "@vramework/generic": "^0.0.5",
+    "@vramework/generic": "^0.0.6",
     "pg": "^8.7.3",
     "pg-camelcase": "^0.0.3",
-    "pino": "^8.1.0",
+    "pino": "^8.4.0",
     "snake-case": "^3.0.4"
   },
   "devDependencies": {

@@ -3,6 +3,7 @@
 ### 0.0.15
 
 feat: making specifying schema compulsory
+chore: updating dependencies
 
 ## 26.06.2022
 
