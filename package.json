@@ -1,6 +1,6 @@
 {
   "name": "typed-postgres",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "author": "Vlandor LTD",
   "license": "MIT",
   "main": "dist/src",
