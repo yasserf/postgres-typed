@@ -1,3 +1,9 @@
+## 09.08.2022
+
+### 0.0.16
+
+feat: allow pool to be passed into constructor if shared elsewhere
+
 ## 08.08.2022
 
 ### 0.0.15

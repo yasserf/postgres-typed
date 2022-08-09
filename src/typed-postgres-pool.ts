@@ -8,9 +8,14 @@ export class TypedPostgresPool<Tables extends { [key: string]: any }, CustomType
   public pool: Pool
   public client!: pg.PoolClient
 
-  constructor(private dbCredentials: pg.PoolConfig, private logger: Logger, public schema: string) {
-    this.logger.info(`Using db host: ${dbCredentials.host}`)
-    this.pool = new Pool(dbCredentials)
+  constructor(dbCredentialsOrPool: pg.PoolConfig | Pool, private logger: Logger, public schema: string) {
+    if (dbCredentialsOrPool instanceof Pool) {
+      this.pool = dbCredentialsOrPool
+    } else {
+      this.logger.info(`Using db host: ${dbCredentialsOrPool.host}`)
+      this.pool = new Pool(dbCredentialsOrPool)
+    }
+
   }
 
   public async init() {
@@ -84,7 +89,7 @@ export class TypedPostgresPool<Tables extends { [key: string]: any }, CustomType
       this.logger.info(`Postgres server version is: ${rows[0].serverVersion}`)
     } catch (e) {
       console.error(e)
-      this.logger.error(`Unable to connect to server with ${this.dbCredentials.host}, exiting server`)
+      this.logger.error(`Unable to connect to server, exiting server`)
       process.exit(1)
     }
   }
