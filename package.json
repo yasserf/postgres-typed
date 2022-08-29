@@ -13,15 +13,15 @@
   },
   "dependencies": {
     "@vramework/generic": "^0.0.6",
-    "pg": "^8.7.3",
+    "pg": "^8.8.0",
     "pg-camelcase": "^0.0.3",
-    "pino": "^8.4.0",
+    "pino": "^8.4.2",
     "snake-case": "^3.0.4"
   },
   "devDependencies": {
     "@types/pg": "^8.6.5",
     "@types/pino": "^7.0.5",
     "@vramework/schemats": "latest",
-    "typescript": "^4.7.4"
+    "typescript": "^4.8.2"
   }
 }

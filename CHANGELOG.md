@@ -6,6 +6,8 @@ feat: get a typed client from pool
 
 fix: fixing the postgres pool api for aliasing tables
 
+chore: updating dependencies
+
 ## 09.08.2022
 
 ### 0.0.16
