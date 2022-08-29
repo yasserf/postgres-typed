@@ -1,5 +1,11 @@
 ## 29.08.2022
 
+### 0.0.18
+
+chore: updating dependencies
+
+## 29.08.2022
+
 ### 0.0.17
 
 feat: get a typed client from pool
