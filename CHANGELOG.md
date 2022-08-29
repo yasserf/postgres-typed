@@ -1,3 +1,11 @@
+## 29.08.2022
+
+### 0.0.17
+
+feat: get a typed client from pool
+
+fix: fixing the postgres pool api for aliasing tables
+
 ## 09.08.2022
 
 ### 0.0.16

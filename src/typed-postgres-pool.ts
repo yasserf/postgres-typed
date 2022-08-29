@@ -3,6 +3,7 @@ import * as pg from 'pg'
 import { Pool } from 'pg'
 import { exactlyOneResult, getFilters, Logger, QueryInterface, sanitizeResult, ValueTypes } from './database-utils'
 import { snakeCase } from 'snake-case'
+import { TypedPostgresClient } from './typed-postgres-client'
 
 export class TypedPostgresPool<Tables extends { [key: string]: any }, CustomTypes = never> {
   public pool: Pool
@@ -26,6 +27,10 @@ export class TypedPostgresPool<Tables extends { [key: string]: any }, CustomType
 
   public async getClient() {
     return this.pool.connect()
+  }
+
+  public getTypedClient(userId: string): TypedPostgresClient<Tables, CustomTypes> {
+    return new TypedPostgresClient<Tables, CustomTypes>(this, this.logger, userId)
   }
 
   public async crudGetAll<N extends keyof Tables, T extends Tables[N]>(table: N, filters: Partial<T> | FilterSubExpressions): Promise<T[]>
@@ -94,7 +99,7 @@ export class TypedPostgresPool<Tables extends { [key: string]: any }, CustomType
     }
   }
 
-  public createFields<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, alias?: string) {
+  public createFields<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, alias: string = table as string) {
     const r = fields.reduce((r, field) => {
       r.push(`'${String(field)}'`)
       r.push(`"${alias}".${snakeCase(field as string)}`)
@@ -103,7 +108,7 @@ export class TypedPostgresPool<Tables extends { [key: string]: any }, CustomType
     return r.join(',')
   }
 
-  private selectFields<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, alias?: string) {
+  private selectFields<N extends keyof Tables, T extends Tables[N], F extends readonly (keyof T)[]>(table: N, fields: F, alias: string = table as string) {
     const r = fields.reduce((r, field) => {
       r.push(`"${alias}".${snakeCase(field as string)}`)
       return r
