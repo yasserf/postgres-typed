@@ -59,7 +59,7 @@ export class TypedPostgresPool<Tables extends { [key: string]: any }, CustomType
     return result.rows
   }
 
-  public async one<T>(
+  public async one<T extends pg.QueryResultRow>(
     statement: QueryInterface<Tables>,
     values: Array<ValueTypes> = [],
     error: Error
@@ -68,7 +68,7 @@ export class TypedPostgresPool<Tables extends { [key: string]: any }, CustomType
     return exactlyOneResult(r.rows, error)
   }
 
-  public async many<T>(
+  public async many<T extends pg.QueryResultRow>(
     statement: QueryInterface<Tables>,
     values: Array<ValueTypes> = []
   ): Promise<T[]> {
@@ -76,7 +76,7 @@ export class TypedPostgresPool<Tables extends { [key: string]: any }, CustomType
     return r.rows
   }
 
-  public async query<T>(statement: QueryInterface<Tables>, values?: any[]) {
+  public async query<T extends pg.QueryResultRow>(statement: QueryInterface<Tables>, values?: any[]) {
     const query = typeof statement === 'string' ? statement : statement({
       cf: this.createFields,
       sf: this.selectFields

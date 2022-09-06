@@ -135,27 +135,27 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
       return r.rows
     }
 
-    const result = await this.query<void>(`DELETE FROM "${this.pool.schema}"."${String(table)}" ${filter}`, filterValues)
+    const result = await this.query<pg.QueryResultRow>(`DELETE FROM "${this.pool.schema}"."${String(table)}" ${filter}`, filterValues)
     if (notSingleError && result.rowCount !== 1) {
       exactlyOneResult(result.rows, notSingleError)
     }
   }
 
-  public async debugQuery<T = { rows: unknown[] }>(
+  public async debugQuery<T extends pg.QueryResultRow = { rows: unknown[] }>(
     statement: QueryInterface<Tables>,
     values: Array<ValueTypes> = []
   ): Promise<QueryResult<T>> {
     return await this._query<T>(statement, values, 'debug')
   }
 
-  public async query<T = { rows: unknown[] }>(
+  public async query<T extends pg.QueryResultRow = { rows: unknown[] }>(
     statement: QueryInterface<Tables>,
     values: Array<ValueTypes> = []
   ): Promise<QueryResult<T>> {
     return await this._query<T>(statement, values)
   }
 
-  public async one<T>(
+  public async one<T extends pg.QueryResultRow>(
     statement: QueryInterface<Tables>,
     values: Array<ValueTypes> = [],
     error: Error
@@ -164,7 +164,7 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
     return exactlyOneResult(r.rows, error)
   }
 
-  public async many<T>(
+  public async many<T extends pg.QueryResultRow>(
     statement: QueryInterface<Tables>,
     values: Array<ValueTypes> = []
   ): Promise<T[]> {
@@ -172,7 +172,7 @@ export class TypedPostgresClient<Tables extends { [key: string]: any }, CustomTy
     return r.rows
   }
 
-  private async _query<T = { rows: unknown[] }>(
+  private async _query<T extends pg.QueryResultRow = { rows: unknown[] }>(
     statement: QueryInterface<Tables>,
     values: Array<ValueTypes> = [],
     debug?: 'debug',

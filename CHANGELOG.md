@@ -1,3 +1,9 @@
+## 06.09.2022
+
+### 0.0.19
+
+chore: fixing new typescript errors
+
 ## 29.08.2022
 
 ### 0.0.18

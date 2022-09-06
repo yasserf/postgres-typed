@@ -15,7 +15,7 @@
     "@vramework/generic": "^0.0.6",
     "pg": "^8.8.0",
     "pg-camelcase": "^0.0.3",
-    "pino": "^8.4.2",
+    "pino": "^8.5.0",
     "snake-case": "^3.0.4"
   },
   "devDependencies": {
